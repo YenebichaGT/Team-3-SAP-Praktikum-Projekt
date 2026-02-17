@@ -3,9 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dashboard</title>
 </head>
 <body>
+    <button type="button" onclick="chartDisplay(0)">Jahr</button> 
+    <button type="button" onclick="chartDisplay(1)">Quartal</button>            
+    <button type="button" onclick="chartDisplay(2)">Monat</button> 
+
+    <script>
+    function chartDisplay(span) {
+        var view;
+        switch(span) {
+            case 0:
+                view = "Jahresansicht";
+                break;
+            case 1:
+                view = "Quartalsansicht";
+                break;
+            case 2:
+                view = "Monatsansicht";
+                break;
+            default:
+
+        } 
+        
+        document.getElementById("demo").innerHTML = time;
+    }
+</script>
+    <p id="demo">Jahresansicht</p>
     
 </body>
 </html>
