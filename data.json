@@ -1,0 +1,35 @@
+{
+  "unternehmen": {
+    "name": "Musterfirma GmbH"
+  },
+  "transaktionen": [
+    {
+      "datum": "2025-01-05",
+      "typ": "einnahme",
+      "kategorie": "Verkauf",
+      "beschreibung": "Rechnung Nr. 1001 - Webdesign Projekt",
+      "betrag": 2500.00
+    },
+    {
+      "datum": "2025-01-10",
+      "typ": "ausgabe",
+      "kategorie": "Miete",
+      "beschreibung": "Büromiete Januar 2025",
+      "betrag": 1200.00
+    },
+    {
+      "datum": "2025-01-15",
+      "typ": "ausgabe",
+      "kategorie": "Software",
+      "beschreibung": "Adobe Creative Cloud Abo",
+      "betrag": 89.99
+    },
+    {
+      "datum": "2025-02-01",
+      "typ": "einnahme",
+      "kategorie": "Beratung",
+      "beschreibung": "IT-Beratung Februar",
+      "betrag": 1800.00
+    }
+  ]
+}
