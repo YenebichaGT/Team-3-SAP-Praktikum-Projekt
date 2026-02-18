@@ -5,137 +5,124 @@
 <button type="button" onclick="chartDisplay(0)">Jahr</button> 
 <button type="button" onclick="chartDisplay(1)">Quartal</button>            
 <button type="button" onclick="chartDisplay(2)">Monat</button> 
-<p id="demo">Jahresansicht</p>
+<p id="Ansicht">Jahresansicht</p>
 <canvas id="overview" style="width:100%;max-width:700px"></canvas>
 
 <script>
-var xyValues = [ // ausgedachte Werte von Chatgpt
 
-  // Januar
-  {x: 1, y: 1200},
-  {x: 1.25, y: 1350},
-  {x: 1.5, y: 1280},
-  {x: 1.75, y: 1420},
 
-  // Februar
-  {x: 2, y: 1400},
-  {x: 2, y: 1500},
-  {x: 2, y: 1450},
-  {x: 2, y: 1550},
 
-  // März
-  {x: 3, y: 1600},
-  {x: 3, y: 1580},
-  {x: 3, y: 1700},
-  {x: 3, y: 1650},
+var einnahmen = [
+    [0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], // Zeitachse: Zeilen sind Monate und nter Wert ist der 
+    [0,0,0,0,0,0,350,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], // Wert für den nten Tag im Monat der Spalte
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,700,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+]
+var ausgaben = [
+    [0,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], // Zeitachse: Zeilen sind Monate und nter Wert ist der 
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], // Wert für den nten Tag im Monat der Spalte
+    [0,0,0,0,0,0,40,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,70,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,30,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+]
 
-  // April
-  {x: 4, y: 1720},
-  {x: 4, y: 1680},
-  {x: 4, y: 1800},
-  {x: 4, y: 1750},
-
-  // Mai
-  {x: 5, y: 1850},
-  {x: 5, y: 1900},
-  {x: 5, y: 1780},
-  {x: 5, y: 1950},
-
-  // Juni
-  {x: 6, y: 2000},
-  {x: 6, y: 2100},
-  {x: 6, y: 2050},
-  {x: 6, y: 2150},
-
-  // Juli
-  {x: 7, y: 2200},
-  {x: 7, y: 2250},
-  {x: 7, y: 2300},
-  {x: 7, y: 2400},
-
-  // August
-  {x: 8, y: 2350},
-  {x: 8, y: 2450},
-  {x: 8, y: 2500},
-  {x: 8, y: 2600},
-
-  // September
-  {x: 9, y: 2550},
-  {x: 9, y: 2650},
-  {x: 9, y: 2700},
-  {x: 9, y: 2800},
-
-  // Oktober
-  {x: 10, y: 2750},
-  {x: 10, y: 2850},
-  {x: 10, y: 2900},
-  {x: 10, y: 3000},
-
-  // November
-  {x: 11, y: 2950},
-  {x: 11, y: 3100},
-  {x: 11, y: 3200},
-  {x: 11, y: 3300},
-
-  // Dezember
-  {x: 12, y: 3400},
-  {x: 12, y: 3500},
-  {x: 12, y: 3600},
-  {x: 12, y: 3800},
-
-];
-
-var chart; 
-var xMin = 1, xMax = 12;
+function getJahresdaten(arr) {
+    return arr.map(row => row.reduce((a, b) => a + b, 0)); // Jede Zeile wird zusammengezählt und alle 12 Zeilen werden
+                                                            // zurückgegeben
+}
+function getQuartalsdaten(arr) {
+    return [0,1,2,3].map(q => arr.slice(q*3, q*3+3).flat().reduce((a,b)=>a+b,0));
+}
+function getMonatsdaten(arr) {
+    return arr[0];
+}
 
 function chartDisplay(span) {
-    var view;
-    var filteredData;
-    
+    var xData, yDataE, yDataA;
     switch(span) {
         case 0:
-            view = "Jahresansicht";
-            filteredData = xyValues; 
-            xMin = 1; xMax = 12;
+            xData = Array.from({length: 12}, (_, i) => i + 1);
+            yDataE = getJahresdaten(einnahmen);
+            yDataA = getJahresdaten(ausgaben);
             break;
         case 1:
-            view = "Quartalsansicht";
-            filteredData = xyValues.filter(d => d.x >= 3 && d.x <= 6); // Q2 
-            xMin = 3; xMax = 6;
+            xData = [1,2,3,4];
+            yDataE = getQuartalsdaten(einnahmen);
+            yDataA = getQuartalsdaten(ausgaben);
             break;
         case 2:
-            view = "Monatsansicht";
-            filteredData = xyValues.filter(d => d.x == 1); 
-            xMin = 1; xMax = 1.9;
+            xData = Array.from({length: 31}, (_, i) => i + 1);
+            yDataE = getMonatsdaten(einnahmen);
+            yDataA = getMonatsdaten(ausgaben);
             break;
-        default:
-            view = "Unbekannt";
     }
-    
-    document.getElementById("demo").innerHTML = view;
-    
-    chart.data.datasets[0].data = filteredData;
+    var yMin = Math.min(...yDataE, ...yDataA);
+    var yMax = Math.max(...yDataE, ...yDataA);
+
+    document.getElementById("Ansicht").innerHTML = ["Jahresansicht","Quartalsansicht","Monatsansicht"][span];
+    chart.data.labels = xData; // Chart skalieren
+    chart.data.datasets[0].data = yDataE;
+    chart.data.datasets[1].data = yDataA;
+    chart.options.scales.yAxes[0].ticks.min = yMin;
+    chart.options.scales.yAxes[0].ticks.max = yMax;
+    chart.options.scales.xAxes = [{ticks: {min: Math.min(...xData), max: Math.max(...xData)}}];
     chart.update();
 }
 
+window.onload = function() {
+    var yDataE = getJahresdaten(einnahmen);
+    var yDataA = getJahresdaten(ausgaben);
+    var yMin = Math.min(...yDataE, ...yDataA);
+    var yMax = Math.max(...yDataE, ...yDataA);
+    chart = new Chart("overview", {
+        type: "line",
+        data: {
+            labels: Array.from({length: 12}, (_, i) => i + 1),
+            datasets: [
+                {
+                    label: 'Einnahmen', // Einnahmenlinie zeichnen
+                    fill: false,
+                    lineTension: 0,
+                    backgroundColor: "rgba(0,255,0,1.0)",
+                    borderColor: "rgba(0,255,0,0.7)",
+                    data: yDataE
+                },
+                {
+                    label: 'Ausgaben', // Ausgabenlinie zeichen
+                    fill: false,
+                    lineTension: 0,
+                    backgroundColor: "rgba(255,0,0,1.0)",
+                    borderColor: "rgba(255,0,0,0.7)",
+                    data: yDataA
+                }
+            ]
+        },
+        options: {
+            legend: {display: true},
+            scales: {
+                yAxes: [{ticks: {min: yMin, max: yMax}}],
+            },
+            //animation: {duration: 50} // Kunde wollte keine Animation
+        }
+    });
+};
 
-chart = new Chart("overview", {
-  type: "scatter",
-  data: {
-    datasets: [{
-      pointRadius: 4,
-      pointBackgroundColor: "rgb(0,0,255)",
-      data: xyValues
-    }]
-  },
-  options: {
-    legend: {display: false},
-    scales: {
-      xAxes: [{ticks: {min: 1, max: 12}}],
-      yAxes: [{ticks: {min: 0, max: 4000}}],
-    }
-  }
-});
+
 </script>
     
 
