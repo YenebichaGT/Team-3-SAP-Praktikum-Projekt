@@ -6,7 +6,10 @@
 <button type="button" onclick="chartDisplay(1)">Quartal</button>            
 <button type="button" onclick="chartDisplay(2)">Monat</button> 
 <p id="Ansicht">Jahresansicht</p>
-<canvas id="overview" style="width:100%;max-width:700px"></canvas>
+<div id = 'chartContainer'>
+  <canvas id="overview" style="width:100%;max-width:700px"></canvas>
+</div>
+
 
 <script>
 
@@ -124,6 +127,26 @@ window.onload = function() {
 
 
 </script>
+
+<div id="quickData">
+  <h2>Überblick</h2>
+  <p>Einnahmenveränderung</p>
+  <p>Ausgabenveränderung</p>
+  <p>Gesamtgewinn</p>
+</div>
+
+<style>
+#chartContainer, #quickData{
+    width:700px;
+    height:100px;
+    margin-right:10px;
+    float:left;
+}
+.chartContainer{
+    float:left;
+    margin-right:5px;
+}
+</style>
     
 
 </body>
