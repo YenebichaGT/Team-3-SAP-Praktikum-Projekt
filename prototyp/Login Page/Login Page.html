@@ -9,27 +9,26 @@
 <body>
   <div class="login-container">
     <h2>Log In</h2>
-    <div class="block">
-      <label>Email</label>
-      <input type="email" />
-    </div>
-    <div class="block">
-      <label>Password</label>
-      <input type="password" />
-    </div>
-     <div class="form-options">
-       <label class="remember-me">
-         <input type="checkbox" name="remember"> Remember me
-       </label>
+    <form id="loginForm">
+      <div class="block">
+        <label>Email</label>
+        <input type="email" id="email" name="email" required />
+      </div>
+      <div class="block">
+        <label>Password</label>
+        <input type="password" id="password" name="password" required />
+      </div>
+      <div class="form-options">
+        <label class="remember-me">
+          <input type="checkbox" name="remember"> Remember me
+        </label>
         <a href="#" class="forgot-password">Forgot password?</a>
-     </div>
-
-     <button type="submit" class="login-button">Log In</button>
-   
-
-    <p class="register-link">
-      Don't have an account? <a href="#">Sign up</a>
-    </p>
+      </div>
+      <button type="submit" class="login-button">Log In</button>
+      <p class="register-link">
+        Don't have an account? <a href="#">Sign up</a>
+      </p>
+    </form>
   </div>
 </body>
-</html>   
+</html>  
