@@ -613,6 +613,18 @@ function logout() {
 }
 
 document.addEventListener('DOMContentLoaded', async function () {
+  // Navigation markieren
+  const navLinks = document.querySelectorAll('.main-nav a');
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    const href = link.getAttribute('href');
+    const currentPage = window.location.pathname.split('/').pop();
+    const linkPage = href.split('/').pop();
+    if (currentPage === linkPage) {
+      link.classList.add('active');
+    }
+  });
+
   // Transaktionsdaten laden
   await loadTransactionData();
   
