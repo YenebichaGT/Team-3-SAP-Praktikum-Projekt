@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buchungen</title>
+    <link rel="stylesheet" href="stylesB.css">
+  </head>
+  <body>
+    <header class="fixed-header">
+      <div class="header-inner">
+        <div class="left">
+          <div class="logo">ORBIT</div>
+        </div>
+        <div class="center">
+          <nav class="main-nav">
+            <a href="../Dashboard/dashboard.html">Dashboard</a>
+            <a href="Buchungen.html">Buchungen</a>
+          </nav>
+        </div>
+        <div class="right">
+          <button id="profileBtn" class="profile-btn" aria-haspopup="true" aria-expanded="false">
+            <span class="profile-pic">JD</span>
+          </button>
+          <div id="profileDropdown" class="profile-dropdown" role="menu" aria-hidden="true">
+            <a href="#" role="menuitem">Profil</a>
+            <a href="#" role="menuitem">Einstellungen</a>
+            <a href="#" role="menuitem">Kontakt</a>
+            <a onclick="logout()" role="menuitem">Logout</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <script src="scriptB.js"></script>
+  </body>
+</html>
