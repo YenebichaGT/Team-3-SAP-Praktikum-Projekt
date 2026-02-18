@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="stylesDB.css">
+  </head>
+  <body>
+    <header class="fixed-header">
+      <div class="header-inner">
+        <div class="left">
+          <div class="logo">SAP</div>
+        </div>
+        <div class="center">
+          <nav class="main-nav">
+            <a href="dashboard.html">Dashboard</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+          </nav>
+        </div>
+        <div class="right">
+          <button id="profileBtn" class="profile-btn" aria-haspopup="true" aria-expanded="false">
+            <span class="profile-pic">JD</span>
+          </button>
+          <div id="profileDropdown" class="profile-dropdown" role="menu" aria-hidden="true">
+            <a href="#" role="menuitem">Profil</a>
+            <a href="#" role="menuitem">Settings</a>
+            <a onclick="logout()" role="menuitem">Logout</a>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class ="content">
+      
+    
+    
+    </div>
+    <footer>
+        <p>&copy; 2024 SAP. All rights reserved.</p>
+    </footer> 
+    <script src="scriptDB.js"></script>
+  </body>
+</html>

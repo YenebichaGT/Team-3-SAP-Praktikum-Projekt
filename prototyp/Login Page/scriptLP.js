@@ -6,7 +6,8 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
 
       // Hardcoded correct credentials (change as needed)
       if (email === "user@example.com" && password === "123") {
-        window.location.href = "app.html"; // Redirect to your app
+        sessionStorage.setItem("loggedIn", "true"); // Set session variable
+        window.location.href = "../Dashboard/dashboard.html"; // Redirect to the dashboard page
       } else {
         alert("Invalid email or password!");
       }
