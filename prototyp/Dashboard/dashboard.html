@@ -19,6 +19,9 @@
           </nav>
         </div>
         <div class="right">
+          <button id="editWidgetsBtn" class="edit-widgets-btn" title="Widgets bearbeiten">
+            <span>⚙️ Widgets bearbeiten</span>
+          </button>
           <button id="profileBtn" class="profile-btn" aria-haspopup="true" aria-expanded="false">
             <span class="profile-pic">JD</span>
           </button>
@@ -31,73 +34,34 @@
         </div>
       </div>
     </header>
+
+    <!-- Modal für Widget-Verwaltung -->
+    <div id="widgetModal" class="modal" role="dialog" aria-hidden="true" aria-labelledby="widgetModalTitle">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="widgetModalTitle">Widgets konfigurieren</h2>
+          <button id="closeModalBtn" class="close-btn" aria-label="Schließen">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-description">Wählen Sie die Widgets aus, die auf Ihrem Dashboard angezeigt werden sollen:</p>
+          <div id="widgetCheckboxes" class="widget-checkboxes">
+            <!-- Wird durch JavaScript gefüllt -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="cancelBtn" class="btn btn-secondary">Abbrechen</button>
+          <button id="saveBtn" class="btn btn-primary">Speichern</button>
+        </div>
+      </div>
+    </div>
     <div class="content">
-      <div class="dashboard-grid">
-        <!-- Widget: Text/Stat -->
-        <div class="widget widget-stat">
-          <div class="widget-header">
-            <h3>Gesamtzahl der Buchungen</h3>
-          </div>
-          <div class="widget-content">
-            <div class="stat-number">1,245</div> 
-            <div class="stat-change">+12.5%</div> 
-          </div>
-        </div>
-
-        <!-- Widget: Text/Stat -->
-        <div class="widget widget-stat">
-          <div class="widget-header">
-            <h3>Umsatz</h3>
-          </div>
-          <div class="widget-content">
-            <div class="stat-number">$45.2K</div>
-            <div class="stat-label">Dieses Monat</div>
-          </div>
-        </div>
-
-        <!-- Widget: Text/Stat -->
-        <div class="widget widget-stat">
-          <div class="widget-header">
-            <h3>Gewinn</h3>
-          </div>
-          <div class="widget-content">
-            <div class="stat-number">+12.5%</div>
-            <div class="stat-label">Monat über Monat</div>
-          </div>
-        </div>
-
-        <!-- Widget: Financial Chart (larger) -->
-        <div class="widget widget-large">
-          <div class="widget-header">
-            <h3>Finanzübersicht</h3>
-            <div class="widget-controls">
-              <button class="chart-btn" onclick="FinancialChart.setView(0)">Jahr</button>
-              <button class="chart-btn" onclick="FinancialChart.setView(1)">Quartal</button>
-              <button class="chart-btn active" onclick="FinancialChart.setView(2)">Monat</button>
-            </div>
-          </div>
-          <div class="widget-content" style="height: 300px;">
-            <p id="chartViewLabel" style="margin: 0 0 8px 0; color: #666; font-size: 13px;">Monatliche Ansicht</p>
-            <canvas id="financialChart" style="height: 250px;"></canvas>
-          </div>
-        </div>
-
-        <!-- Widget: Text Content -->
-        <div class="widget">
-          <div class="widget-header">
-            <h3>Ausgaben</h3>
-          </div>
-          <div class="widget-content">
-            <div class="stat-number">$12.4K</div>
-            <div class="stat-label">Dieser Monat</div>
-          </div>
-        </div>
-
+      <div class="dashboard-grid" id="dashboardGrid">
+        <!-- Widgets werden durch JavaScript eingefügt -->
       </div>
     </div>
     <footer>
-        <p>&copy; 2024 SAP. All rights reserved.</p>
-    </footer> 
+        <p>&copy; 2024 SAP. Alle Rechte vorbehalten.</p>
+    </footer>
     <script src="scriptDB.js"></script>
   </body>
 </html>

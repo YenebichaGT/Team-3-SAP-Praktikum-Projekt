@@ -1,63 +1,170 @@
 if (sessionStorage.getItem("loggedIn") !== "true") {
-    window.location.href = "../Login Page/LoginPage.html"; // Redirect to login if not logged in
+    window.location.href = "../Login Page/LoginPage.html";
 }
 
-// Widget Factory - Easy widget creation
-const WidgetFactory = {
-  createStatWidget: function(title, number, label) {
-    const widget = document.createElement('div');
-    widget.className = 'widget widget-stat';
-    widget.innerHTML = `
-      <div class="widget-header">
-        <h3>${title}</h3>
-      </div>
-      <div class="widget-content">
-        <div class="stat-number">${number}</div>
-        <div class="stat-label">${label}</div>
-      </div>
-    `;
-    return widget;
+// Widget-Definitionen
+const AVAILABLE_WIDGETS = [
+  {
+    id: 'buchungen',
+    name: 'Gesamtzahl der Buchungen',
+    type: 'stat',
+    enabled: true,
+    data: {
+      number: '1.245',
+      label: '+12,5%'
+    }
   },
-
-  createTextWidget: function(title, content) {
-    const widget = document.createElement('div');
-    widget.className = 'widget';
-    widget.innerHTML = `
-      <div class="widget-header">
-        <h3>${title}</h3>
-      </div>
-      <div class="widget-content">
-        ${typeof content === 'string' ? `<p>${content}</p>` : ''}
-      </div>
-    `;
-    return widget;
+  {
+    id: 'umsatz',
+    name: 'Umsatz',
+    type: 'stat',
+    enabled: true,
+    data: {
+      number: '€45.200',
+      label: 'Diesen Monat'
+    }
   },
-
-  createChartWidget: function(title, svgContent, isLarge = true) {
-    const widget = document.createElement('div');
-    widget.className = `widget ${isLarge ? 'widget-large' : ''}`;
-    widget.innerHTML = `
-      <div class="widget-header">
-        <h3>${title}</h3>
-      </div>
-      <div class="widget-content">
-        <div class="chart-placeholder">
-          ${svgContent}
-        </div>
-      </div>
-    `;
-    return widget;
+  {
+    id: 'gewinn',
+    name: 'Gewinn',
+    type: 'stat',
+    enabled: true,
+    data: {
+      number: '+12,5%',
+      label: 'Monat über Monat'
+    }
   },
-
-  addToGrid: function(widget, gridSelector = '.dashboard-grid') {
-    const grid = document.querySelector(gridSelector);
-    if (grid) {
-      grid.appendChild(widget);
+  {
+    id: 'finanzubersicht',
+    name: 'Finanzübersicht',
+    type: 'chart',
+    enabled: true,
+    large: true
+  },
+  {
+    id: 'ausgaben',
+    name: 'Ausgaben',
+    type: 'stat',
+    enabled: true,
+    data: {
+      number: '€12.400',
+      label: 'Diesen Monat'
     }
   }
-};
+];
 
-// Financial Chart Module - Data & Functionality
+// Widget-Konfiguration aus localStorage laden
+function loadWidgetConfig() {
+  const saved = localStorage.getItem('dashboardWidgets');
+  if (saved) {
+    const config = JSON.parse(saved);
+    AVAILABLE_WIDGETS.forEach(widget => {
+      widget.enabled = config[widget.id] !== false;
+    });
+  }
+}
+
+// Widget-Konfiguration speichern
+function saveWidgetConfig() {
+  const config = {};
+  AVAILABLE_WIDGETS.forEach(widget => {
+    config[widget.id] = widget.enabled;
+  });
+  localStorage.setItem('dashboardWidgets', JSON.stringify(config));
+}
+
+// Dashboard rendern
+function renderDashboard() {
+  const grid = document.getElementById('dashboardGrid');
+  grid.innerHTML = '';
+
+  AVAILABLE_WIDGETS.forEach(widget => {
+    if (!widget.enabled) return;
+
+    const widgetEl = document.createElement('div');
+    widgetEl.className = `widget ${widget.type === 'stat' ? 'widget-stat' : ''} ${widget.large ? 'widget-large' : ''}`;
+    widgetEl.id = `widget-${widget.id}`;
+
+    if (widget.type === 'stat') {
+      widgetEl.innerHTML = `
+        <div class="widget-header">
+          <h3>${widget.name}</h3>
+        </div>
+        <div class="widget-content">
+          <div class="stat-number">${widget.data.number}</div>
+          <div class="stat-label">${widget.data.label}</div>
+        </div>
+      `;
+    } else if (widget.type === 'chart') {
+      widgetEl.innerHTML = `
+        <div class="widget-header">
+          <h3>${widget.name}</h3>
+          <div class="widget-controls">
+            <button class="chart-btn" onclick="FinancialChart.setView(0)">Jahr</button>
+            <button class="chart-btn" onclick="FinancialChart.setView(1)">Quartal</button>
+            <button class="chart-btn active" onclick="FinancialChart.setView(2)">Monat</button>
+          </div>
+        </div>
+        <div class="widget-content" style="height: 300px;">
+          <p id="chartViewLabel" style="margin: 0 0 8px 0; color: #666; font-size: 13px;">Monatliche Ansicht</p>
+          <canvas id="financialChart" style="height: 250px;"></canvas>
+        </div>
+      `;
+    }
+
+    grid.appendChild(widgetEl);
+  });
+
+  // Chart initialisieren, wenn vorhanden
+  if (AVAILABLE_WIDGETS.find(w => w.id === 'finanzubersicht' && w.enabled)) {
+    FinancialChart.init();
+  }
+}
+
+// Modal für Widget-Verwaltung öffnen
+function openWidgetManager() {
+  const modal = document.getElementById('widgetModal');
+  const container = document.getElementById('widgetCheckboxes');
+  container.innerHTML = '';
+
+  AVAILABLE_WIDGETS.forEach(widget => {
+    const label = document.createElement('label');
+    label.className = 'widget-checkbox-label';
+    label.innerHTML = `
+      <input type="checkbox" class="widget-checkbox" data-widget-id="${widget.id}" ${widget.enabled ? 'checked' : ''}>
+      <span>${widget.name}</span>
+    `;
+    container.appendChild(label);
+  });
+
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+}
+
+// Modal schließen
+function closeWidgetManager() {
+  const modal = document.getElementById('widgetModal');
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+}
+
+// Widgets speichern
+function saveWidgets() {
+  const checkboxes = document.querySelectorAll('.widget-checkbox');
+  checkboxes.forEach(checkbox => {
+    const widgetId = checkbox.dataset.widgetId;
+    const widget = AVAILABLE_WIDGETS.find(w => w.id === widgetId);
+    if (widget) {
+      widget.enabled = checkbox.checked;
+    }
+  });
+
+  saveWidgetConfig();
+  renderDashboard();
+  closeWidgetManager();
+}
+
+// Financial Chart Module
 const FinancialChart = {
   data: {
     einnahmen: [
@@ -114,19 +221,19 @@ const FinancialChart = {
         xData = Array.from({length: 12}, (_, i) => i + 1);
         yDataE = this.getYearData(this.data.einnahmen);
         yDataA = this.getYearData(this.data.ausgaben);
-        viewLabel = 'Yearly View';
+        viewLabel = 'Jährliche Ansicht';
         break;
       case 1: // Quarter
-        xData = [1,2,3,4];
+        xData = ['Q1','Q2','Q3','Q4'];
         yDataE = this.getQuarterData(this.data.einnahmen);
         yDataA = this.getQuarterData(this.data.ausgaben);
-        viewLabel = 'Quarterly View';
+        viewLabel = 'Vierteljährliche Ansicht';
         break;
       case 2: // Month
         xData = Array.from({length: 31}, (_, i) => i + 1);
         yDataE = this.getMonthData(this.data.einnahmen);
         yDataA = this.getMonthData(this.data.ausgaben);
-        viewLabel = 'Monthly View';
+        viewLabel = 'Monatliche Ansicht';
         break;
     }
 
@@ -142,7 +249,8 @@ const FinancialChart = {
     this.chart.update();
 
     // Update label
-    document.getElementById('chartViewLabel').textContent = viewLabel;
+    const label = document.getElementById('chartViewLabel');
+    if (label) label.textContent = viewLabel;
 
     // Update button states
     document.querySelectorAll('.chart-btn').forEach((btn, idx) => {
@@ -165,7 +273,7 @@ const FinancialChart = {
         labels: Array.from({length: 31}, (_, i) => i + 1),
         datasets: [
           {
-            label: 'Income (Einnahmen)',
+            label: 'Einnahmen',
             fill: false,
             lineTension: 0.2,
             backgroundColor: 'rgba(76, 175, 80, 0.1)',
@@ -176,7 +284,7 @@ const FinancialChart = {
             data: yDataE
           },
           {
-            label: 'Expenses (Ausgaben)',
+            label: 'Ausgaben',
             fill: false,
             lineTension: 0.2,
             backgroundColor: 'rgba(244, 67, 54, 0.1)',
@@ -200,43 +308,72 @@ const FinancialChart = {
   }
 };
 
-
 function logout() {
-    sessionStorage.removeItem("loggedIn"); // Remove login flag
-    window.location.href = "../Login Page/LoginPage.html"; // Redirect to login
+    sessionStorage.removeItem("loggedIn");
+    window.location.href = "../Login Page/LoginPage.html";
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-	// Initialize Financial Chart
-	FinancialChart.init();
+  // Widget-Konfiguration laden
+  loadWidgetConfig();
+  
+  // Dashboard rendern
+  renderDashboard();
 
-	const btn = document.getElementById('profileBtn');
-	const dropdown = document.getElementById('profileDropdown');
+  // Edit Widgets Button
+  const editBtn = document.getElementById('editWidgetsBtn');
+  if (editBtn) {
+    editBtn.addEventListener('click', openWidgetManager);
+  }
 
-	if (!btn || !dropdown) return;
+  // Modal Buttons
+  const saveBtn = document.getElementById('saveBtn');
+  const cancelBtn = document.getElementById('cancelBtn');
+  const closeBtn = document.getElementById('closeModalBtn');
+  const modal = document.getElementById('widgetModal');
 
-	btn.addEventListener('click', function (e) {
-		e.stopPropagation();
-		const opened = dropdown.classList.toggle('open');
-		btn.setAttribute('aria-expanded', opened);
-		dropdown.setAttribute('aria-hidden', !opened);
-	});
+  if (saveBtn) saveBtn.addEventListener('click', saveWidgets);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeWidgetManager);
+  if (closeBtn) closeBtn.addEventListener('click', closeWidgetManager);
 
-	// Close when clicking outside
-	document.addEventListener('click', function (e) {
-		if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
-			dropdown.classList.remove('open');
-			btn.setAttribute('aria-expanded', 'false');
-			dropdown.setAttribute('aria-hidden', 'true');
-		}
-	});
+  // Modal schließen wenn außerhalb geklickt
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        closeWidgetManager();
+      }
+    });
+  }
 
-	// Close on ESC
-	document.addEventListener('keydown', function (e) {
-		if (e.key === 'Escape') {
-			dropdown.classList.remove('open');
-			btn.setAttribute('aria-expanded', 'false');
-			dropdown.setAttribute('aria-hidden', 'true');
-		}
-	});
+  // Profile Dropdown
+  const profileBtn = document.getElementById('profileBtn');
+  const profileDropdown = document.getElementById('profileDropdown');
+
+  if (!profileBtn || !profileDropdown) return;
+
+  profileBtn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    const opened = profileDropdown.classList.toggle('open');
+    profileBtn.setAttribute('aria-expanded', opened);
+    profileDropdown.setAttribute('aria-hidden', !opened);
+  });
+
+  // Close when clicking outside
+  document.addEventListener('click', function (e) {
+    if (!profileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+      profileDropdown.classList.remove('open');
+      profileBtn.setAttribute('aria-expanded', 'false');
+      profileDropdown.setAttribute('aria-hidden', 'true');
+    }
+  });
+
+  // Close on ESC
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      profileDropdown.classList.remove('open');
+      profileBtn.setAttribute('aria-expanded', 'false');
+      profileDropdown.setAttribute('aria-hidden', 'true');
+      closeWidgetManager();
+    }
+  });
 });
