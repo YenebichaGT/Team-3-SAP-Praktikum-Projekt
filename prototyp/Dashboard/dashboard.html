@@ -3,6 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     <link rel="stylesheet" href="stylesDB.css">
   </head>
   <body>
@@ -14,8 +15,7 @@
         <div class="center">
           <nav class="main-nav">
             <a href="dashboard.html">Dashboard</a>
-            <a href="#">About</a>
-            <a href="#">Contact</a>
+            <a href="#">Buchungen</a>
           </nav>
         </div>
         <div class="right">
@@ -24,16 +24,76 @@
           </button>
           <div id="profileDropdown" class="profile-dropdown" role="menu" aria-hidden="true">
             <a href="#" role="menuitem">Profil</a>
-            <a href="#" role="menuitem">Settings</a>
+            <a href="#" role="menuitem">Einstellungen</a>
+            <a href="#" role="menuitem">Kontakt</a>
             <a onclick="logout()" role="menuitem">Logout</a>
           </div>
         </div>
       </div>
     </header>
-    <div class ="content">
-      
-    
-    
+    <div class="content">
+      <div class="dashboard-grid">
+        <!-- Widget: Text/Stat -->
+        <div class="widget widget-stat">
+          <div class="widget-header">
+            <h3>Gesamtzahl der Buchungen</h3>
+          </div>
+          <div class="widget-content">
+            <div class="stat-number">1,245</div> 
+            <div class="stat-change">+12.5%</div> 
+          </div>
+        </div>
+
+        <!-- Widget: Text/Stat -->
+        <div class="widget widget-stat">
+          <div class="widget-header">
+            <h3>Umsatz</h3>
+          </div>
+          <div class="widget-content">
+            <div class="stat-number">$45.2K</div>
+            <div class="stat-label">Dieses Monat</div>
+          </div>
+        </div>
+
+        <!-- Widget: Text/Stat -->
+        <div class="widget widget-stat">
+          <div class="widget-header">
+            <h3>Gewinn</h3>
+          </div>
+          <div class="widget-content">
+            <div class="stat-number">+12.5%</div>
+            <div class="stat-label">Monat über Monat</div>
+          </div>
+        </div>
+
+        <!-- Widget: Financial Chart (larger) -->
+        <div class="widget widget-large">
+          <div class="widget-header">
+            <h3>Finanzübersicht</h3>
+            <div class="widget-controls">
+              <button class="chart-btn" onclick="FinancialChart.setView(0)">Jahr</button>
+              <button class="chart-btn" onclick="FinancialChart.setView(1)">Quartal</button>
+              <button class="chart-btn active" onclick="FinancialChart.setView(2)">Monat</button>
+            </div>
+          </div>
+          <div class="widget-content" style="height: 300px;">
+            <p id="chartViewLabel" style="margin: 0 0 8px 0; color: #666; font-size: 13px;">Monatliche Ansicht</p>
+            <canvas id="financialChart" style="height: 250px;"></canvas>
+          </div>
+        </div>
+
+        <!-- Widget: Text Content -->
+        <div class="widget">
+          <div class="widget-header">
+            <h3>Ausgaben</h3>
+          </div>
+          <div class="widget-content">
+            <div class="stat-number">$12.4K</div>
+            <div class="stat-label">Dieser Monat</div>
+          </div>
+        </div>
+
+      </div>
     </div>
     <footer>
         <p>&copy; 2024 SAP. All rights reserved.</p>
