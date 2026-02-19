@@ -18,16 +18,17 @@ if (!$input) {
 }
 
 // data.json laden
-$dataFile = 'data.json';
+
+$dataFile = '../Buchungen/data.json';
 if (!file_exists($dataFile)) {
-    $data = ['elements' => []];
+    $data = ['transactions' => []];
 } else {
     $data = json_decode(file_get_contents($dataFile), true);
-    if (!$data) $data = ['elements' => []];
+    if (!$data) $data = ['transactions' => []];
 }
 
 // Neuen Eintrag hinzufügen
-$data['elements'][] = $input;
+$data['transactions'][] = $input;
 
 // Datei speichern
 file_put_contents($dataFile, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));

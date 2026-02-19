@@ -199,16 +199,47 @@ function deleteTransaction(index) {
         return;
     }
 
-    const originalIndex = allTransactions.findIndex(t => t === filteredTransactions[index]);
-    if (originalIndex > -1) {
-        allTransactions.splice(originalIndex, 1);
+    // Finde den Index in der JSON-Datei (muss identisch mit Backend sein!)
+    const tx = filteredTransactions[index];
+    const backendIndex = allTransactions.findIndex(t =>
+        t.date === tx.date &&
+        t.type === tx.type &&
+        t.description === tx.description &&
+        t.amount === tx.amount &&
+        t.category === tx.category
+    );
+    if (backendIndex === -1) {
+        showMessage('Fehler: Eintrag nicht gefunden!', 'error');
+        return;
     }
 
-    syncDataWithBackend();
-    applyFilters();
-    updateSummary();
-    notifyDashboard();
-    showMessage('Transaktion gelöscht!', 'success');
+    fetch('delete_entry.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ index: backendIndex })
+    })
+    .then(async response => {
+        const text = await response.text();
+        let result;
+        try {
+            result = JSON.parse(text);
+        } catch (e) {
+            throw new Error('Serverantwort ist kein gültiges JSON: ' + text);
+        }
+        if (result.success) {
+            allTransactions.splice(backendIndex, 1);
+            syncDataWithBackend();
+            applyFilters();
+            updateSummary();
+            notifyDashboard();
+            showMessage('Transaktion gelöscht!', 'success');
+        } else {
+            showMessage('Fehler beim Löschen: ' + (result.error || 'Unbekannter Fehler'), 'error');
+        }
+    })
+    .catch(err => {
+        showMessage('Fehler beim Löschen: ' + err, 'error');
+    });
 }
 
 /**
@@ -243,13 +274,35 @@ function saveNewTransaction(event) {
         category: document.getElementById('newCategory').value || 'Sonstiges'
     };
 
-    allTransactions.push(newTransaction);
-    syncDataWithBackend();
-    applyFilters();
-    updateSummary();
-    closeAddModal();
-    notifyDashboard();
-    showMessage('Transaktion hinzugefügt!', 'success');
+    // Backend speichern
+    fetch('add_entry.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newTransaction)
+    })
+    .then(async response => {
+        const text = await response.text();
+        let result;
+        try {
+            result = JSON.parse(text);
+        } catch (e) {
+            throw new Error('Serverantwort ist kein gültiges JSON: ' + text);
+        }
+        if (result.success) {
+            allTransactions.push(newTransaction);
+            syncDataWithBackend();
+            applyFilters();
+            updateSummary();
+            closeAddModal();
+            notifyDashboard();
+            showMessage('Transaktion hinzugefügt!', 'success');
+        } else {
+            showMessage('Fehler beim Speichern: ' + (result.error || 'Unbekannter Fehler'), 'error');
+        }
+    })
+    .catch(err => {
+        showMessage('Fehler beim Speichern: ' + err, 'error');
+    });
 }
 
 /**

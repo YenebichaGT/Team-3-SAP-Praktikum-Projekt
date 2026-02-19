@@ -15,7 +15,8 @@ if (!isset($input['index'])) {
     exit;
 }
 
-$dataFile = 'data.json';
+
+$dataFile = '../Buchungen/data.json';
 if (!file_exists($dataFile)) {
     http_response_code(404);
     echo json_encode(['error' => 'Datei nicht gefunden']);
@@ -23,13 +24,13 @@ if (!file_exists($dataFile)) {
 }
 
 $data = json_decode(file_get_contents($dataFile), true);
-if (!isset($data['elements'][$input['index']])) {
+if (!isset($data['transactions'][$input['index']])) {
     http_response_code(404);
     echo json_encode(['error' => 'Eintrag nicht gefunden']);
     exit;
 }
 
-array_splice($data['elements'], $input['index'], 1);
+array_splice($data['transactions'], $input['index'], 1);
 file_put_contents($dataFile, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
 echo json_encode(['success' => true]);
