@@ -266,7 +266,7 @@ function renderDashboard() {
               <span class="comparison-value">€${comparison.currentMonth.toLocaleString('de-DE')}</span>
             </div>
             <div class="comparison-item">
-              <span class="comparison-label">Differenz ${trend}</span>
+              <span class="comparison-label">Differenz</span>
               <span class="comparison-value ${comparison.currentMonth >= comparison.previousMonth ? 'positive' : 'negative'}">€${diff.toLocaleString('de-DE')} (${percent}%)</span>
             </div>
           </div>
