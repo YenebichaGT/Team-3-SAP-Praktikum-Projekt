@@ -43,20 +43,38 @@ function getTransactionsByTimeRange() {
   return filtered;
 }
 
-// Einnahmen berechnen
-function calculateIncome() {
-  const transactions = getTransactionsByTimeRange();
-  return transactions
-    .filter(tx => tx.type === 'Einnahme')
-    .reduce((sum, tx) => sum + tx.amount, 0);
+// Transaktionen für aktuellen Monat (für Einnahmen/Ausgaben Widgets)
+function getTransactionsByCurrentMonth() {
+  const filtered = allTransactions.filter(tx => {
+    const txDate = new Date(tx.date);
+    const txYear = txDate.getFullYear();
+    const txMonth = txDate.getMonth() + 1;
+    
+    // Nur Februar 2026
+    return txYear === 2026 && txMonth === 2;
+  });
+  console.log(`getTransactionsByCurrentMonth: ${filtered.length} Transaktionen gefunden`);
+  return filtered;
 }
 
-// Ausgaben berechnen
+// Einnahmen berechnen (immer für aktuellen Monat)
+function calculateIncome() {
+  const transactions = getTransactionsByCurrentMonth();
+  const income = transactions
+    .filter(tx => tx.type === 'Einnahme')
+    .reduce((sum, tx) => sum + tx.amount, 0);
+  console.log(`Einnahmen (${selectedMonth}/${selectedYear}):`, income, 'Transaktionen:', transactions.filter(tx => tx.type === 'Einnahme').length);
+  return income;
+}
+
+// Ausgaben berechnen (immer für aktuellen Monat)
 function calculateExpenses() {
-  const transactions = getTransactionsByTimeRange();
-  return transactions
+  const transactions = getTransactionsByCurrentMonth();
+  const expenses = transactions
     .filter(tx => tx.type === 'Ausgabe')
     .reduce((sum, tx) => sum + tx.amount, 0);
+  console.log(`Ausgaben (${selectedMonth}/${selectedYear}):`, expenses, 'Transaktionen:', transactions.filter(tx => tx.type === 'Ausgabe').length);
+  return expenses;
 }
 
 // Ergebnis berechnen
