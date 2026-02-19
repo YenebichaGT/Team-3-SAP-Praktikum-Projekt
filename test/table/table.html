@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<p>Click the "Try it" button to toggle between hiding and showing the DIV element:</p>
+
+<button onclick="myFunction()">Neuen Eintrag hinzufügen</button>
+
+<div id="myDIV" style="display:none;">
+<input type="text" id="name" value="Name"><br><br>
+<p>Wähle den Betrag aus:</p>
+<input type="number" name="number"/><br><br>
+<input type="text" id="beschreibung" value="Beschreibung"><br><br>
+<input type="date" id="datum" value="Datum"><br><br>
+<fieldset> 
+  <legend>Wähle die Eintragsart aus:</legend>
+
+  <div>
+    <input type="radio" id="einnahme" name="drone" value="einnahme" checked />
+    <label for="einnahme">Einnahme</label>
+  </div>
+
+  <div>
+    <input type="radio" id="ausgabe" name="drone" value="ausgabe" />
+    <label for="ausgabe">Ausgabe</label>
+  </div>
+</fieldset>
+<input type="submit" name="submit"/>
+</div>
+
+
+<script>
+function myFunction() {
+  var x = document.getElementById("myDIV");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+</script>
+
+<p id="demo"></p>
+
+<script>
+fetch('data.json')
+  .then(response => response.json())
+  .then(data => {
+    console.log(data); // Zugriff auf das JSON-Objekt
+    document.getElementById("demo").innerHTML = "<h2>Hello " + data.name + "</h2>";
+  });
+</script>
+
+</body>
+</html>
+
