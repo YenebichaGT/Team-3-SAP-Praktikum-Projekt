@@ -57,23 +57,21 @@ function getTransactionsByCurrentMonth() {
   return filtered;
 }
 
-// Einnahmen berechnen (immer für aktuellen Monat)
+// Einnahmen berechnen (für ausgewählten Zeitraum)
 function calculateIncome() {
-  const transactions = getTransactionsByCurrentMonth();
+  const transactions = getTransactionsByTimeRange();
   const income = transactions
     .filter(tx => tx.type === 'Einnahme')
     .reduce((sum, tx) => sum + tx.amount, 0);
-  console.log(`Einnahmen (${selectedMonth}/${selectedYear}):`, income, 'Transaktionen:', transactions.filter(tx => tx.type === 'Einnahme').length);
   return income;
 }
 
-// Ausgaben berechnen (immer für aktuellen Monat)
+// Ausgaben berechnen (für ausgewählten Zeitraum)
 function calculateExpenses() {
-  const transactions = getTransactionsByCurrentMonth();
+  const transactions = getTransactionsByTimeRange();
   const expenses = transactions
     .filter(tx => tx.type === 'Ausgabe')
     .reduce((sum, tx) => sum + tx.amount, 0);
-  console.log(`Ausgaben (${selectedMonth}/${selectedYear}):`, expenses, 'Transaktionen:', transactions.filter(tx => tx.type === 'Ausgabe').length);
   return expenses;
 }
 
@@ -651,6 +649,25 @@ document.addEventListener('DOMContentLoaded', async function () {
   
   // Dashboard rendern
   renderDashboard();
+
+  // Listen for transactions changed event from table
+  window.addEventListener('transactionsChanged', async function() {
+    console.log('Dashboard: Transaktionen haben sich gewechselt, aktualisieren...');
+    await loadTransactionData();
+    renderDashboard();
+  });
+
+  // Also check localStorage periodically for changes
+  let lastUpdateTime = 0;
+  setInterval(async function() {
+    const updateTime = localStorage.getItem('transactionsUpdated');
+    if (updateTime && parseInt(updateTime) > lastUpdateTime) {
+      lastUpdateTime = parseInt(updateTime);
+      console.log('Dashboard: Änderungen erkannt, aktualisieren...');
+      await loadTransactionData();
+      renderDashboard();
+    }
+  }, 1000);
 
   // Edit Widgets Button
   const editBtn = document.getElementById('editWidgetsBtn');

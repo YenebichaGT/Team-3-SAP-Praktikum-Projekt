@@ -1,126 +1,349 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Transaktionen Tabelle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 100%;
+            background-color: transparent;
+            padding: 0;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .controls button {
+            display: none;
+        }
+
+        .controls button.btn-primary {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .controls button.btn-primary:hover {
+            background-color: #000;
+        }
+
+        .btn-success, .btn-secondary, .btn-danger {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-success {
+            background-color: #333;
+            color: white;
+            display: none;
+        }
+
+        .btn-success:hover {
+            background-color: #000;
+        }
+
+        .btn-danger {
+            background-color: #333;
+            color: white;
+            display: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #000;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            display: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        body.edit-mode .btn-success,
+        body.edit-mode .btn-secondary,
+        body.edit-mode .btn-danger {
+            display: inline-block;
+        }
+
+        #statusMessage {
+            display: none;
+        }
+
+        #statusMessage.success,
+        #statusMessage.error {
+            display: block;
+        }
+
+        .status-message {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        .status-message.success {
+            background-color: #e7f3ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+
+        .status-message.error {
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .summary {
+            display: none;
+        }
+
+        .filters {
+            display: none;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #0056b3;
+        }
+        th.actions-header {
+            display: none;
+        }
+        body.edit-mode th.actions-header {
+            display: table-cell;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal.show {
+            display: block;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+        }
+
+        .modal-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        h1 {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            th, td {
+                padding: 8px;
+                font-size: 13px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div id="statusMessage" class="status-message"></div>
 
-<p>Click the "Try it" button to toggle between hiding and showing the DIV element:</p>
+        <div class="controls">
+            <button class="btn btn-success" onclick="openAddModal()">➕ Neue Transaktion</button>
+            <button class="btn btn-secondary" onclick="refreshData()">🔄 Aktualisieren</button>
+        </div>
 
-<button onclick="myFunction()">Neuen Eintrag hinzufügen</button>
+        <div class="summary" id="summaryContainer"></div>
 
-<div id="myDIV" style="display:none;">
-<input type="text" id="name" value="Name"><br><br>
-<p>Wähle den Betrag aus:</p>
-<input type="number" name="number"/><br><br>
-<input type="text" id="beschreibung" value="Beschreibung"><br><br>
-<input type="date" id="datum" value="Datum"><br><br>
-<fieldset> 
-  <legend>Wähle die Eintragsart aus:</legend>
+        <div class="filters">
+            <div class="form-group">
+                <label for="typeFilter">Typ:</label>
+                <select id="typeFilter" onchange="applyFilters()">
+                    <option value="">Alle</option>
+                    <option value="Einnahme">Einnahme</option>
+                    <option value="Ausgabe">Ausgabe</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="categoryFilter">Kategorie:</label>
+                <select id="categoryFilter" onchange="applyFilters()">
+                    <option value="">Alle</option>
+                </select>
+            </div>
+        </div>
 
-  <div>
-    <input type="radio" id="einnahme" name="drone" value="einnahme" checked />
-    <label for="einnahme">Einnahme</label>
-  </div>
+        <div class="table-wrapper">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Typ</th>
+                        <th>Beschreibung</th>
+                        <th>Betrag</th>
+                        <th>Kategorie</th>
+                        <th id="actionsHeader" class="actions-header">Aktionen</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-  <div>
-    <input type="radio" id="ausgabe" name="drone" value="ausgabe" />
-    <label for="ausgabe">Ausgabe</label>
-  </div>
-</fieldset>
-<button onclick="addElement()">hinzufügen</button>
-</div>
+    <!-- Modal für neue Transaktion -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeAddModal()">&times;</span>
+                Neue Transaktion hinzufügen
+            </div>
+            <form id="addForm" onsubmit="saveNewTransaction(event)">
+                <div class="form-group">
+                    <label for="newDate">Datum:</label>
+                    <input type="date" id="newDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="newType">Typ:</label>
+                    <select id="newType" required>
+                        <option value="Einnahme">Einnahme</option>
+                        <option value="Ausgabe">Ausgabe</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="newDescription">Beschreibung:</label>
+                    <input type="text" id="newDescription" required>
+                </div>
+                <div class="form-group">
+                    <label for="newAmount">Betrag:</label>
+                    <input type="number" id="newAmount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="newCategory">Kategorie:</label>
+                    <input type="text" id="newCategory" placeholder="z.B. Verkauf, Betrieb">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-success">Speichern</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeAddModal()">Abbrechen</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-
-<script>
-function myFunction() {
-  var x = document.getElementById("myDIV");
-  if (x.style.display === "none") {
-    x.style.display = "block";
-  } else {
-    x.style.display = "none";
-  }
-}
-</script>
-
-<p id="demo"></p>
-
-<script>
-
-
-
-fetch('data.json')
-  .then(response => response.json())
-  .then(data => {
-    let html = '<table border="1"><tr><th>Name</th><th>Betrag</th><th>Datum</th><th>Beschreibung</th><th>Einnahme</th><th>Löschen</th></tr>';
-    data.elements.forEach((item, idx) => {
-      html += `<tr>
-        <td>${item.name}</td>
-        <td>${item.betrag}</td>
-        <td>${new Date(item.datum).toLocaleDateString()}</td>
-        <td>${item.beschreibung}</td>
-        <td>${item.einnahme ? 'Ja' : 'Nein'}</td>
-        <td><button onclick="deleteEntry(${idx})">Löschen</button></td>
-      </tr>`;
-    });
-    html += '</table>';
-    document.getElementById("demo").innerHTML = html;
-  });
-
-function deleteEntry(index) {
-  if (!confirm('Diesen Eintrag wirklich löschen?')) return;
-  fetch('delete_entry.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ index: index })
-  })
-  .then(response => response.json())
-  .then(result => {
-    if (result.success) {
-      location.reload();
-    } else {
-      alert('Fehler beim Löschen: ' + (result.error || 'Unbekannter Fehler'));
-    }
-  })
-  .catch(() => alert('Serverfehler beim Löschen!'));
-}
-
-function addElement() {
-  var name = document.getElementById("name").value;
-  var betrag = document.querySelector('input[name="number"]').value;
-  var beschreibung = document.getElementById("beschreibung").value;
-  var datum = document.getElementById("datum").value;
-  var einnahme = document.querySelector('input[name="drone"]:checked').value === "einnahme";
-
-  fetch('add_entry.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      name: name,
-      betrag: Number(betrag),
-      beschreibung: beschreibung,
-      datum: datum,
-      einnahme: einnahme
-    })
-  })
-  .then(response => response.json())
-  .then(result => {
-    if (result.success) {
-      location.reload();
-    } else {
-      alert('Fehler beim Hinzufügen: ' + (result.error || 'Unbekannter Fehler'));
-    }
-  })
-  .catch(() => alert('Serverfehler beim Hinzufügen!'));
-  reload(); 
-}
-</script>
-
+    <script src="scriptT.js"></script>
 </body>
+</html>
 </html>
 

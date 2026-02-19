@@ -7,25 +7,32 @@ function logout() {
     window.location.href = "../Login Page/LoginPage.html";
 }
 
+function markActiveNavigation() {
+  const navLinks = document.querySelectorAll('.main-nav a');
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    const href = link.getAttribute('href');
+    const currentPage = window.location.pathname.split('/').pop();
+    const linkPage = href.split('/').pop();
+    if (currentPage === linkPage) {
+      link.classList.add('active');
+    }
+  });
+}
+
+function toggleEditModeFromParent() {
+  const tableFrame = document.getElementById('tableFrame');
+  if (tableFrame && tableFrame.contentWindow) {
+    // Call toggleEditMode in the iframe
+    if (tableFrame.contentWindow.toggleEditMode) {
+      tableFrame.contentWindow.toggleEditMode();
+    }
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async function () {
-  // Navigation markieren
+  // Mark active navigation
   markActiveNavigation();
-
-  // Daten laden
-  await loadTransactionData();
-  renderTable();
-
-  // Edit Mode Button
-  const editModeBtn = document.getElementById('editModeBtn');
-  if (editModeBtn) {
-    editModeBtn.addEventListener('click', toggleEditMode);
-  }
-
-  // Neue Buchung hinzufügen Button
-  const addNewBtn = document.getElementById('addNewRowBtn');
-  if (addNewBtn) {
-    addNewBtn.addEventListener('click', addNewTransaction);
-  }
 
   // Profile Dropdown
   const profileBtn = document.getElementById('profileBtn');
