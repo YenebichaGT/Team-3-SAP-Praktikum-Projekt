@@ -247,7 +247,6 @@ function renderDashboard() {
       `;
     } else if (widget.type === 'comparison') {
       const comparison = calculateMonthComparison();
-      const trend = comparison.currentMonth >= comparison.previousMonth ? '📈' : '📉';
       const diff = Math.abs(comparison.currentMonth - comparison.previousMonth);
       const percent = comparison.previousMonth > 0 ? ((diff / comparison.previousMonth) * 100).toFixed(1) : '0';
       
