@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+</head>
+<body>
+
+<p>Click the "Try it" button to toggle between hiding and showing the DIV element:</p>
+
+<button onclick="myFunction()">Neuen Eintrag hinzufügen</button>
+
+<div id="myDIV" style="display:none;">
+<input type="text" id="name" value="Name"><br><br>
+<p>Wähle den Betrag aus:</p>
+<input type="number" name="number"/><br><br>
+<input type="text" id="beschreibung" value="Beschreibung"><br><br>
+<input type="date" id="datum" value="Datum"><br><br>
+<fieldset> 
+  <legend>Wähle die Eintragsart aus:</legend>
+
+  <div>
+    <input type="radio" id="einnahme" name="drone" value="einnahme" checked />
+    <label for="einnahme">Einnahme</label>
+  </div>
+
+  <div>
+    <input type="radio" id="ausgabe" name="drone" value="ausgabe" />
+    <label for="ausgabe">Ausgabe</label>
+  </div>
+</fieldset>
+<button onclick="addElement()">hinzufügen</button>
+</div>
+
+
+<script>
+function myFunction() {
+  var x = document.getElementById("myDIV");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+</script>
+
+<p id="demo"></p>
+
+<script>
+
+
+
+fetch('data.json')
+  .then(response => response.json())
+  .then(data => {
+    let html = '<table border="1"><tr><th>Name</th><th>Betrag</th><th>Datum</th><th>Beschreibung</th><th>Einnahme</th><th>Löschen</th></tr>';
+    data.elements.forEach((item, idx) => {
+      html += `<tr>
+        <td>${item.name}</td>
+        <td>${item.betrag}</td>
+        <td>${new Date(item.datum).toLocaleDateString()}</td>
+        <td>${item.beschreibung}</td>
+        <td>${item.einnahme ? 'Ja' : 'Nein'}</td>
+        <td><button onclick="deleteEntry(${idx})">Löschen</button></td>
+      </tr>`;
+    });
+    html += '</table>';
+    document.getElementById("demo").innerHTML = html;
+  });
+
+function deleteEntry(index) {
+  if (!confirm('Diesen Eintrag wirklich löschen?')) return;
+  fetch('delete_entry.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ index: index })
+  })
+  .then(response => response.json())
+  .then(result => {
+    if (result.success) {
+      location.reload();
+    } else {
+      alert('Fehler beim Löschen: ' + (result.error || 'Unbekannter Fehler'));
+    }
+  })
+  .catch(() => alert('Serverfehler beim Löschen!'));
+}
+
+function addElement() {
+  var name = document.getElementById("name").value;
+  var betrag = document.querySelector('input[name="number"]').value;
+  var beschreibung = document.getElementById("beschreibung").value;
+  var datum = document.getElementById("datum").value;
+  var einnahme = document.querySelector('input[name="drone"]:checked').value === "einnahme";
+
+  fetch('add_entry.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      name: name,
+      betrag: Number(betrag),
+      beschreibung: beschreibung,
+      datum: datum,
+      einnahme: einnahme
+    })
+  })
+  .then(response => response.json())
+  .then(result => {
+    if (result.success) {
+      location.reload();
+    } else {
+      alert('Fehler beim Hinzufügen: ' + (result.error || 'Unbekannter Fehler'));
+    }
+  })
+  .catch(() => alert('Serverfehler beim Hinzufügen!'));
+  reload(); 
+}
+</script>
+
+</body>
+</html>
+
